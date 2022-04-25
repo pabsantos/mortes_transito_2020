@@ -16,7 +16,8 @@ estados <- read_tsv("data/lista_estados.tsv", col_types = c("c", "c", "c"))
 
 mortes <- clean_data(dados)
 
-mortes %>% 
-  group_by(regiao, ano = year(dtobito)) %>% 
-  summarise(n = n()) %>% 
-  pivot_wider(names_from = ano, values_from = n, names_prefix = "ano_")
+regiao_delta <- calc_deltas(mortes, regiao)
+
+tipo_delta <- calc_deltas(mortes, tipo_vitima)
+
+uf_delta <- calc_deltas(mortes, uf)

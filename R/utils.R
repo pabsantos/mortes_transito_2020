@@ -30,3 +30,10 @@ clean_data <- function(data) {
     left_join(estados, by = "cod_uf")
 }
 
+calc_deltas <- function(data, var) {
+  data %>% 
+    group_by({{ var }}, ano = year(dtobito)) %>% 
+    summarise(n = n()) %>% 
+    pivot_wider(names_from = ano, values_from = n, names_prefix = "ano_") %>% 
+    mutate(delta = (ano_2020 - ano_2019) / ano_2019)
+}
