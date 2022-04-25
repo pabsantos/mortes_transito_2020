@@ -37,3 +37,46 @@ calc_deltas <- function(data, var) {
     pivot_wider(names_from = ano, values_from = n, names_prefix = "ano_") %>% 
     mutate(delta = (ano_2020 - ano_2019) / ano_2019)
 }
+
+arrange_pie_data <- function(data) {
+  data %>% 
+    select(-delta) %>% 
+    ungroup() %>% 
+    mutate(
+      perc_2019 = ano_2019 / sum(tipo_delta$ano_2019),
+      perc_2020 = ano_2020 / sum(tipo_delta$ano_2020),
+      ypos_2019 = cumsum(perc_2019) - 0.5 * perc_2019,
+      ypos_2020 = cumsum(perc_2020) - 0.5 * perc_2020,
+    ) %>% 
+    select(-ano_2019, -ano_2020) %>% 
+    pivot_longer(
+      perc_2019:ypos_2020,
+      names_to = c("type", "ano"), 
+      names_sep = "_"
+    ) %>% 
+    pivot_wider(names_from = type, values_from = value) %>% 
+    mutate(
+      label = scales::percent(perc, accuracy = 0.1)
+    )
+}
+
+plot_pie <- function(
+    data, label_size, label_pos, legend_size, line_size, key_size
+  ) {
+  data %>% 
+    ggplot(aes(x = "", y = perc, fill = tipo_vitima)) +
+    geom_bar(color = "white", width = 1, stat = "identity", lwd = line_size) +
+    coord_polar("y") +
+    facet_wrap(~ano) +
+    geom_text(
+      aes(label = label, x = label_pos),
+      position = position_stack(vjust = 0.5),
+      size = label_size
+    ) +
+    theme_void() +
+    labs(fill = "") +
+    scale_fill_brewer(palette = "Dark2") +
+    theme(
+      legend.text = element_text(size = legend_size),
+      legend.key.size = unit(key_size, "cm"))
+}
