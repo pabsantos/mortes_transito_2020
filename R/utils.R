@@ -80,3 +80,20 @@ plot_pie <- function(
       legend.text = element_text(size = legend_size),
       legend.key.size = unit(key_size, "cm"))
 }
+
+plot_uf_delta <- function(sf) {
+  tm_shape(sf) +
+    tm_borders(col = "grey20", lwd = 0.4) +
+    tm_fill(
+      col = "delta",
+      title = "",
+      palette = "-RdYlGn",
+      n = 6,
+      legend.format = list(fun = scales::percent_format(accuracy = 1))
+    ) +
+    tm_text("SIGLA", size = 0.5) +
+    tm_layout(
+      legend.format = list(text.separator = "a"),
+      frame = NA
+    )
+}

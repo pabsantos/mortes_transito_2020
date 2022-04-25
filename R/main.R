@@ -1,7 +1,8 @@
 library(microdatasus)
 library(tidyverse)
 library(lubridate)
-library(ggrepel)
+library(tmap)
+library(sf)
 
 source("R/utils.R")
 
@@ -43,4 +44,17 @@ ggsave(
   dpi = 300
 )
 
-br <- geobr::read_state()
+br <- st_read("data/BRUFE250GC_SIR.shp")
+
+br <- br %>% 
+  left_join(uf_delta, by = c("SIGLA" = "uf"))
+
+br_delta_plot <- plot_uf_delta(br)
+
+tmap_save(
+  tm = br_delta_plot,
+  filename = "plot/br_delta_plot.png",
+  width = 6,
+  height = 6,
+  dpi = 300,
+)
