@@ -1,3 +1,18 @@
+read_datasus <- function() {
+  if (exists("data/datasus.rds")) {
+    readRDS("data/datasus.rds")
+  } else {
+    fetch_datasus(
+      year_start = 2019,
+      year_end = 2020,
+      uf = "all",
+      information_system = "SIM-DOEXT",
+      vars = c("CODMUNOCOR", "DTOBITO", "CAUSABAS")
+    )
+  }
+}
+
+
 clean_data <- function(data) {
   data %>% 
     as_tibble() %>% 
