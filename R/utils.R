@@ -12,7 +12,6 @@ read_datasus <- function() {
   }
 }
 
-
 clean_data <- function(data) {
   data %>% 
     as_tibble() %>% 

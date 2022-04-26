@@ -6,13 +6,11 @@ library(sf)
 
 source("R/utils.R")
 
-dados <- fetch_datasus(
-  year_start = 2019,
-  year_end = 2020,
-  uf = "all",
-  information_system = "SIM-DOEXT",
-  vars = c("CODMUNOCOR", "DTOBITO", "CAUSABAS")
-)
+dados <- read_datasus()
+
+if (!exists("data/datasus.rds")) {
+  saveRDS(dados, "data/datasus.rds")
+}
 
 estados <- read_tsv("data/lista_estados.tsv", col_types = c("c", "c", "c"))
 
