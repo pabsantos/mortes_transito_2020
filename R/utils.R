@@ -111,3 +111,39 @@ plot_uf_delta <- function(sf) {
       frame = NA
     )
 }
+
+calc_full_delta <- function(data) {
+  data %>% 
+    group_by(uf, ano = year(dtobito), tipo_vitima) %>% 
+    summarise(n = n()) %>% 
+    ungroup() %>% 
+    pivot_wider(
+      names_from = c(ano, tipo_vitima), 
+      values_from = n, 
+      names_prefix = "ano"
+    ) %>% 
+    janitor::clean_names() %>% 
+    mutate(across(
+      ano2019_ciclistas:ano2020_ocupantes_de_onibus, 
+      ~ifelse(is.na(.x), 0, .x)
+    ),
+    delta_ciclistas = 
+      (ano2020_ciclistas - ano2019_ciclistas) / ano2019_ciclistas,
+    delta_motociclistas = 
+      (ano2020_motociclistas - ano2019_motociclistas) / ano2019_motociclistas,
+    delta_ocupantes_de_automovel = 
+      (ano2020_ocupantes_de_automovel - ano2019_ocupantes_de_automovel) / ano2019_ocupantes_de_automovel,
+    delta_ocupantes_de_caminhao = (ano2020_ocupantes_de_caminhao - ano2019_ocupantes_de_caminhao) / ano2019_ocupantes_de_caminhao,
+    delta_outros = (ano2020_outros - ano2019_outros) / ano2019_outros,
+    delta_pedestres = (ano2020_pedestres - ano2019_pedestres) / ano2019_pedestres,
+    delta_ocupantes_de_onibus = (ano2020_ocupantes_de_onibus - ano2019_ocupantes_de_onibus) / ano2019_ocupantes_de_onibus
+    ) %>% 
+    mutate(perc_outros_2020 = 
+             ano2020_outros / (
+               ano2020_outros + ano2020_ciclistas + ano2020_motociclistas + 
+                 ano2020_ocupantes_de_automovel + ano2020_ocupantes_de_caminhao + 
+                 ano2020_ocupantes_de_onibus + ano2020_pedestres
+             )
+    ) %>% 
+    select(uf, starts_with("delta"), perc_outros_2020)
+}

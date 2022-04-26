@@ -56,3 +56,7 @@ tmap_save(
   height = 6,
   dpi = 300,
 )
+
+full_delta <- mortes %>% calc_full_delta()
+
+writexl::write_xlsx(mortes, "data/base_datasus_2019_2020.xlsx")
